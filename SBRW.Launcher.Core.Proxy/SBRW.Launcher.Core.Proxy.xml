@@ -8,13 +8,12 @@
             <summary>
             Proxy Class Built With Nancy
             </summary>
-            <remarks><i>Requires <b>Nancy Self-Hosted</b> Library</i></remarks>
+            <remarks><i>SBRW Requires <b>Nancy Self-Hosted</b> Library</i></remarks>
         </member>
-        <member name="M:SBRW.Launcher.Core.Proxy.Nancy_.Proxy_Server.Running">
+        <member name="P:SBRW.Launcher.Core.Proxy.Nancy_.Proxy_Server.Host_Service">
             <summary>
-            Boolean Value on Launcher Proxy if its Running
+            Proxy Service
             </summary>
-            <returns>True or False</returns>
         </member>
         <member name="M:SBRW.Launcher.Core.Proxy.Nancy_.Proxy_Server.Start(System.String)">
             <summary>
@@ -39,6 +38,28 @@
             Stops the Proxy Server
             </summary>
             <remarks>Provides a Genric <i>From Location</i> Call in the Log</remarks>
+        </member>
+        <member name="T:SBRW.Launcher.Core.Proxy.Nancy_.Proxy_Settings">
+            <summary>
+            Central Proxy Settings
+            </summary>
+        </member>
+        <member name="M:SBRW.Launcher.Core.Proxy.Nancy_.Proxy_Settings.Running">
+            <summary>
+            Boolean Value on Launcher Proxy if its Running
+            </summary>
+            <remarks><i>Requires <b>SBRW Nancy Self-Hosted</b> Library</i></remarks>
+            <returns>True or False</returns>
+        </member>
+        <member name="M:SBRW.Launcher.Core.Proxy.Nancy_.Proxy_Settings.Custom_Port(System.String)">
+            <summary>
+            Set Proxy Port Number
+            </summary>
+        </member>
+        <member name="M:SBRW.Launcher.Core.Proxy.Nancy_.Proxy_Settings.Custom_Port">
+            <summary>
+            Set Proxy Port Number
+            </summary>
         </member>
         <member name="T:SBRW.Launcher.Core.Proxy.Singleton_Instance.Singleton`1">
             <summary>

@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461;net472</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.0002</Version>
+    <Version>0.0.0003</Version>
     <Authors>Soapbox Race World - Launcher Division</Authors>
     <Company>Soapbox Race World</Company>
-    <Description>A Game Launchers Proxy Library built within the .NET Framework</Description>
+    <Description>A Game Launchers Proxy Library built within the .NET Standard Framework</Description>
     <RepositoryUrl>https://github.com/DavidCarbon-SBRW/SBRW.Launcher.Core.Proxy</RepositoryUrl>
     <PackageIcon>Logo-Full-Size.png</PackageIcon>
     <PackageIconUrl />
@@ -26,15 +26,15 @@
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-	<PackageReference Include="Microsoft.CSharp" Version="4.0.1" />
+	<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.0" />
     <PackageReference Include="Nancy" Version="2.0.0" />
-    <PackageReference Include="Nancy.Hosting.Self" Version="2.0.0" />
     <PackageReference Include="SBRW.Launcher.Core" Version="0.0.15-preview001" />
-    <PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.0.4-preview001" />
+    <PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.0.6" />
+    <PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.0.3" />
   </ItemGroup>
 
   <ItemGroup>
