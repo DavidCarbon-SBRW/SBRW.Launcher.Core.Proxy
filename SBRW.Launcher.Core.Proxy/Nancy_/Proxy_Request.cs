@@ -8,7 +8,7 @@ using Nancy.Responses;
 using SBRW.Launcher.Core.Classes.Cache;
 using SBRW.Launcher.Core.Classes.Extension.Logging_;
 using SBRW.Launcher.Core.Classes.Required.Anti_Cheat;
-using SBRW.Launcher.Core.Discord.Discord_.RPC_;
+using SBRW.Launcher.Core.Discord.RPC_;
 using SBRW.Launcher.Core.Proxy.Log_;
 using System;
 using System.Linq;
@@ -126,7 +126,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
                 int statusCode = responseMessage.StatusCode;
 
-                Presence_Game.HandleGameState(path, responseBody, Local_Context.Request.Query);
+                Presence_Game.State(path, responseBody, Local_Context.Request.Query);
 
                 TextResponse Response = new TextResponse(responseBody,
                     responseMessage.ResponseMessage.Content.Headers.ContentType?.MediaType ?? "application/xml;charset=UTF-8")
