@@ -14,7 +14,10 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
         /// <remarks><i>Requires <b>SBRW Nancy Self-Hosted</b> Library</i></remarks>
         /// <returns>True or False</returns>
         public static bool Running() => Proxy_Server.Host_Service != null;
-        internal static int Port { get; set; } = 2017;
+        /// <summary>
+        /// Cached Custom Port
+        /// </summary>
+        public static int Port { get; set; } = 2017;
         /// <summary>
         /// Set Proxy Port Number
         /// </summary>
