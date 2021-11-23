@@ -20,10 +20,16 @@ using UrlFlurl = Flurl.Url;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_
 {
-    internal class Proxy_Request : IApplicationStartup
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Proxy_Request : IApplicationStartup
     {
         private readonly UTF8Encoding UTF8 = new UTF8Encoding(false);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Data_Pipelines"></param>
         public void Initialize(IPipelines Data_Pipelines)
         {
             Data_Pipelines.BeforeRequest += ProxyRequest;
@@ -40,7 +46,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
             context.Request.Dispose();
 
-            return new TextResponse(HttpStatusCode.BadRequest, Error.Message);
+            return new TextResponse(!Proxy_Settings.Ignore_Errors ? HttpStatusCode.BadRequest : HttpStatusCode.OK, Error.Message);
         }
 
         private async Task<Response> ProxyRequest(NancyContext Local_Context, CancellationToken cancellationToken)
@@ -51,93 +57,102 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             if (!path.StartsWith("/nfsw/Engine.svc"))
             {
                 Log.Error("PROXY HANDLER: Invalid Request: " + path);
-                return "Soapbox Race World: Launcher Proxy Core Version " + AssemblyName.GetAssemblyName("SBRW.Launcher.Core.Proxy.dll").Version.ToString()??string.Empty;
+                return "Soapbox Race World: Launcher Proxy Core Version " + 
+                    AssemblyName.GetAssemblyName("SBRW.Launcher.Core.Proxy.dll").Version.ToString()??string.Empty;
             }
             else
             {
-                path = path.Substring("/nfsw/Engine.svc".Length);
+                string responseBody = string.Empty;
 
-                UrlFlurl resolvedUrl = new UrlFlurl(Launcher_Value.Game_Server_IP).AppendPathSegment(path, false);
-
-                foreach (var queryParamName in Local_Context.Request.Query)
+                try
                 {
-                    resolvedUrl = resolvedUrl.SetQueryParam(queryParamName, Local_Context.Request.Query[queryParamName],
-                        NullValueHandling.Ignore);
-                }
+                    path = path.Substring("/nfsw/Engine.svc".Length);
 
-                IFlurlRequest request = resolvedUrl.AllowAnyHttpStatus();
+                    UrlFlurl resolvedUrl = new UrlFlurl(Launcher_Value.Game_Server_IP).AppendPathSegment(path, false);
 
-                foreach (var header in Local_Context.Request.Headers)
-                {
-                    /* Don't send Content-Length for GET requests - HeyItsLeo */
-                    if (method == "GET" && header.Key.ToLowerInvariant() == "content-length")
+                    foreach (var queryParamName in Local_Context.Request.Query)
                     {
-                        continue;
+                        resolvedUrl = resolvedUrl.SetQueryParam(queryParamName, Local_Context.Request.Query[queryParamName],
+                            NullValueHandling.Ignore);
                     }
 
-                    request = request.WithHeader
-                        (header.Key, (header.Key == "Host") ? resolvedUrl.ToUri().Host : ((header.Value != null) ? header.Value.First() : string.Empty));
-                }
+                    IFlurlRequest request = resolvedUrl.AllowAnyHttpStatus();
 
-                string requestBody = (method != "GET") ? Local_Context.Request.Body.AsString(UTF8) : string.Empty;
-
-                Communication_Nancy.RecordEntry(Launcher_Value.Game_Server_Name, "SERVER", CommunicationLogEntryType.Request,
-                    new CommunicationLogRequest(requestBody, resolvedUrl.ToString(), method));
-
-                IFlurlResponse responseMessage;
-
-                if (path == "/event/arbitration" && !string.IsNullOrWhiteSpace(requestBody))
-                {
-                    requestBody = requestBody.Replace("</TopSpeed>", "</TopSpeed><Konami>" + AC_Core.Status_Convert() + "</Konami>");
                     foreach (var header in Local_Context.Request.Headers)
                     {
-                        if (header.Key.ToLowerInvariant() == "content-length")
+                        /* Don't send Content-Length for GET requests - HeyItsLeo */
+                        if (method == "GET" && header.Key.ToLowerInvariant() == "content-length")
                         {
-                            int KonamiCode = Convert.ToInt32(header.Value.First()) +
-                                ("<Konami>" + AC_Core.Status_Convert() + "</Konami>").Length;
-                            request = request.WithHeader(header.Key, KonamiCode);
+                            continue;
+                        }
+
+                        request = request.WithHeader
+                            (header.Key, (header.Key == "Host") ? resolvedUrl.ToUri().Host : 
+                            ((header.Value != null) ? header.Value.First() : string.Empty));
+                    }
+
+                    string requestBody = (method != "GET") ? Local_Context.Request.Body.AsString(UTF8) : string.Empty;
+
+                    Communication_Nancy.RecordEntry(Launcher_Value.Game_Server_Name, "SERVER", CommunicationLogEntryType.Request,
+                        new CommunicationLogRequest(requestBody, resolvedUrl.ToString(), method));
+
+                    IFlurlResponse responseMessage;
+
+                    if (path == "/event/arbitration" && !string.IsNullOrWhiteSpace(requestBody))
+                    {
+                        requestBody = requestBody.Replace("</TopSpeed>", "</TopSpeed><Konami>" + AC_Core.Status_Convert() + "</Konami>");
+                        foreach (var header in Local_Context.Request.Headers)
+                        {
+                            if (header.Key.ToLowerInvariant() == "content-length")
+                            {
+                                int KonamiCode = Convert.ToInt32(header.Value.First()) +
+                                    ("<Konami>" + AC_Core.Status_Convert() + "</Konami>").Length;
+                                request = request.WithHeader(header.Key, KonamiCode);
+                            }
                         }
                     }
+
+                    switch (method)
+                    {
+                        case "GET":
+                            responseMessage = await request.GetAsync(cancellationToken);
+                            break;
+                        case "POST":
+                            responseMessage = await request.PostAsync(new CapturedStringContent(requestBody),
+                                cancellationToken);
+                            break;
+                        case "PUT":
+                            responseMessage = await request.PutAsync(new CapturedStringContent(requestBody),
+                                cancellationToken);
+                            break;
+                        case "DELETE":
+                            responseMessage = await request.DeleteAsync(cancellationToken);
+                            break;
+                        default:
+                            Log.Error("PROXY HANDLER: Cannot handle Request Method " + method);
+                            responseMessage = null;
+                            break;
+                    }
+
+                    responseBody = await responseMessage.GetStringAsync();
+
+                    int statusCode = responseMessage.StatusCode;
+
+                    TextResponse Response = new TextResponse(responseBody,
+                        responseMessage.ResponseMessage.Content.Headers.ContentType?.MediaType ?? "application/xml;charset=UTF-8")
+                    {
+                        StatusCode = (HttpStatusCode)statusCode
+                    };
+
+                    Communication_Nancy.RecordEntry(Launcher_Value.Game_Server_Name, "SERVER", CommunicationLogEntryType.Response,
+                        new CommunicationLogResponse(responseBody, resolvedUrl.ToString(), method));
+
+                    return Response;
                 }
-
-                switch (method)
+                finally
                 {
-                    case "GET":
-                        responseMessage = await request.GetAsync(cancellationToken);
-                        break;
-                    case "POST":
-                        responseMessage = await request.PostAsync(new CapturedStringContent(requestBody),
-                            cancellationToken);
-                        break;
-                    case "PUT":
-                        responseMessage = await request.PutAsync(new CapturedStringContent(requestBody),
-                            cancellationToken);
-                        break;
-                    case "DELETE":
-                        responseMessage = await request.DeleteAsync(cancellationToken);
-                        break;
-                    default:
-                        Log.Error("PROXY HANDLER: Cannot handle Request Method " + method);
-                        responseMessage = null;
-                        break;
+                    Presence_Game.State(path, responseBody, Local_Context.Request.Query);
                 }
-
-                string responseBody = await responseMessage.GetStringAsync();
-
-                int statusCode = responseMessage.StatusCode;
-
-                Presence_Game.State(path, responseBody, Local_Context.Request.Query);
-
-                TextResponse Response = new TextResponse(responseBody,
-                    responseMessage.ResponseMessage.Content.Headers.ContentType?.MediaType ?? "application/xml;charset=UTF-8")
-                {
-                    StatusCode = (HttpStatusCode)statusCode
-                };
-
-                Communication_Nancy.RecordEntry(Launcher_Value.Game_Server_Name, "SERVER", CommunicationLogEntryType.Response,
-                    new CommunicationLogResponse(responseBody, resolvedUrl.ToString(), method));
-
-                return Response;
             }
         }
     }

@@ -5,13 +5,22 @@ using System.Collections.Generic;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_
 {
-    internal class Nancy_Bootstrapper : DefaultNancyBootstrapper
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Nancy_Bootstrapper : DefaultNancyBootstrapper
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected override IEnumerable<Type> ViewEngines
         {
             get { return new List<Type>(); }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="environment"></param>
         public override void Configure(INancyEnvironment environment)
         {
             base.Configure(environment);
