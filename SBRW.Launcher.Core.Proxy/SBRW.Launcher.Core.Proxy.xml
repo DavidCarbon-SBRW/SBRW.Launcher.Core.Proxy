@@ -51,6 +51,11 @@
             <remarks><i>Requires <b>SBRW Nancy Self-Hosted</b> Library</i></remarks>
             <returns>True or False</returns>
         </member>
+        <member name="P:SBRW.Launcher.Core.Proxy.Nancy_.Proxy_Settings.Port">
+            <summary>
+            Cached Custom Port
+            </summary>
+        </member>
         <member name="M:SBRW.Launcher.Core.Proxy.Nancy_.Proxy_Settings.Custom_Port(System.String)">
             <summary>
             Set Proxy Port Number

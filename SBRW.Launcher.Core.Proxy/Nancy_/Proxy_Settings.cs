@@ -1,4 +1,4 @@
-﻿using SBRW.Launcher.Core.Classes.Extension.Logging_;
+﻿using SBRW.Launcher.Core.Extension.Logging_;
 using System;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_

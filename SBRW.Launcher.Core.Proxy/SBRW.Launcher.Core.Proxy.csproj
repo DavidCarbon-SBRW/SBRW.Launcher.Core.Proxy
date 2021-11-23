@@ -3,27 +3,22 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461;net472</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.0006</Version>
+    <Version>0.0.0007</Version>
     <Authors>Soapbox Race World - Launcher Division</Authors>
     <Company>Soapbox Race World</Company>
     <Description>A Game Launchers Proxy Library built within the .NET Standard Framework</Description>
     <RepositoryUrl>https://github.com/DavidCarbon-SBRW/SBRW.Launcher.Core.Proxy</RepositoryUrl>
-    <PackageIcon>Logo-Full-Size.png</PackageIcon>
+    <PackageIcon>Logo_512.png</PackageIcon>
     <PackageIconUrl />
     <RepositoryType>git</RepositoryType>
     <PackageTags>Proxy, Nancy, Furl</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageProjectUrl>https://github.com/DavidCarbon-SBRW/SBRW.Launcher.Core.Proxy</PackageProjectUrl>
     <Copyright>© Soapbox Race World</Copyright>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>F:\GitHub Projects\SBRW.Launcher.Core.Proxy\SBRW.Launcher.Core.Proxy\SBRW.Launcher.Core.Proxy.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>F:\GitHub Projects\SBRW.Launcher.Core.Proxy\SBRW.Launcher.Core.Proxy\SBRW.Launcher.Core.Proxy.xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	  <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <DebugType>embedded</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -32,14 +27,13 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.0" />
-    <PackageReference Include="Nancy" Version="2.0.0" />
-    <PackageReference Include="SBRW.Launcher.Core" Version="0.0.19" />
+    <PackageReference Include="SBRW.Launcher.Core" Version="0.0.20" />
     <PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.0.8" />
-    <PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.0.3" />
+    <PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.0.5" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Resources\Icon\Logo-Full-Size.png">
+    <None Include="Resources\Icon\Logo_512.png">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
