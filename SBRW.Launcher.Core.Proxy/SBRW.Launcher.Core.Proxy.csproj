@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net461;net472</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.0007</Version>
+    <Version>0.0.0008</Version>
     <Authors>Soapbox Race World - Launcher Division</Authors>
     <Company>Soapbox Race World</Company>
     <Description>A Game Launchers Proxy Library built within the .NET Standard Framework</Description>
@@ -16,7 +16,7 @@
     <PackageProjectUrl>https://github.com/DavidCarbon-SBRW/SBRW.Launcher.Core.Proxy</PackageProjectUrl>
     <Copyright>© Soapbox Race World</Copyright>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-	  <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
@@ -28,7 +28,7 @@
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.0" />
     <PackageReference Include="SBRW.Launcher.Core" Version="0.0.20" />
-    <PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.0.8" />
+    <PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.0.10" />
     <PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.0.5" />
   </ItemGroup>
 
