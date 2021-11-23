@@ -1,5 +1,5 @@
-﻿using Nancy;
-using Nancy.Configuration;
+﻿using SBRW.Nancy;
+using SBRW.Nancy.Configuration;
 using System;
 using System.Collections.Generic;
 

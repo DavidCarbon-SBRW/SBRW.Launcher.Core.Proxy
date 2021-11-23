@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using SBRW.Launcher.Core.Classes.Extension.Logging_;
-using SBRW.Launcher.Core.Classes.Extension.Time_;
+using SBRW.Launcher.Core.Extension.Logging_;
+using SBRW.Launcher.Core.Extension.Time_;
 using System;
 using System.Collections.Generic;
 using System.IO;

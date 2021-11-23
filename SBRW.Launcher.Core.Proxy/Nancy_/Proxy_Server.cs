@@ -1,4 +1,4 @@
-﻿using SBRW.Launcher.Core.Classes.Extension.Logging_;
+﻿using SBRW.Launcher.Core.Extension.Logging_;
 using SBRW.Launcher.Core.Proxy.Singleton_Instance;
 using SBRW.Nancy.Hosting.Self;
 using System;

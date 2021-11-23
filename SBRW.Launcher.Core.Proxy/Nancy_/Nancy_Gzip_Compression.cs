@@ -1,9 +1,9 @@
-﻿using Nancy;
-using Nancy.Bootstrapper;
-using Nancy.Responses;
-using SBRW.Launcher.Core.Classes.Cache;
-using SBRW.Launcher.Core.Classes.Extension.Logging_;
-using SBRW.Launcher.Core.Classes.Required.Anti_Cheat;
+﻿using SBRW.Nancy;
+using SBRW.Nancy.Bootstrapper;
+using SBRW.Nancy.Responses;
+using SBRW.Launcher.Core.Cache;
+using SBRW.Launcher.Core.Extension.Logging_;
+using SBRW.Launcher.Core.Required.Anti_Cheat;
 using SBRW.Launcher.Core.Proxy.Log_;
 using System;
 using System.Collections.Generic;
