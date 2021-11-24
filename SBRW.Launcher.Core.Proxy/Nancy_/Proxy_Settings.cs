@@ -9,6 +9,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
     public class Proxy_Settings
     {
         /// <summary>
+        /// Informs the Proxy to Continue with Error
+        /// </summary>
+        /// <remarks>Sets the <see cref="SBRW.Nancy.HttpStatusCode">Status Code</see> to OK (200)</remarks>
+        public static bool Ignore_Errors { get; set; }
+        /// <summary>
         /// Boolean Value on Launcher Proxy if its Running
         /// </summary>
         /// <remarks><i>Requires <b>SBRW Nancy Self-Hosted</b> Library</i></remarks>
@@ -42,11 +47,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
             if (!UsingCustomProxyPort)
             {
-                bool isNumeric = int.TryParse(DateTime.Now.Year.ToString(), out int Port);
+                bool isNumeric = int.TryParse(DateTime.Now.Year.ToString(), out int Converted_Port);
 
                 if (isNumeric)
                 {
-                    Port = new Random().Next(2017, Port);
+                    Port = new Random().Next(2017, Converted_Port);
                 }
                 else
                 {

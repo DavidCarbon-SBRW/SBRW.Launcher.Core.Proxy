@@ -11,12 +11,18 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_
 {
-    internal class Nancy_Gzip_Compression : IApplicationStartup
+    /// <summary>
+    /// 
+    /// </summary>
+    public class Nancy_Gzip_Compression : IApplicationStartup
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Data_Pipelines"></param>
         public void Initialize(IPipelines Data_Pipelines)
         {
             Data_Pipelines.AfterRequest += CheckForCompression;
@@ -33,7 +39,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
             context.Request.Dispose();
 
-            return new TextResponse(HttpStatusCode.BadRequest, Error.Message);
+            return new TextResponse(!Proxy_Settings.Ignore_Errors ? HttpStatusCode.BadRequest : HttpStatusCode.OK, Error.Message);
         }
 
         private static void WebCallRejected(string Reason, NancyContext Context)
@@ -101,9 +107,13 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
                         if (allOfThem != null && allOfThem.Any())
                         {
-                            foreach (var oneProcess in allOfThem)
+                            foreach (Process oneProcess in allOfThem)
                             {
-                                Process.GetProcessById(oneProcess.Id).Kill();
+                                bool LocalProcess = Process.GetProcessById(oneProcess.Id).CloseMainWindow();
+                                if (!LocalProcess)
+                                {
+                                    Process.GetProcessById(oneProcess.Id).Kill();
+                                }
                             }
                         }
                     }
@@ -161,7 +171,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             {
                 if (Context.Response.Headers == null)
                 {
-                    //if (EnableInsiderDeveloper.Allowed()) { Log.Debug("Headers is Null for " + Context.Request.Path); }
+                    if (Launcher_Value.Launcher_Insider_Dev) { Log.Debug("Headers is Null for " + Context.Request.Path); }
                     return true;
                 }
                 else
@@ -175,7 +185,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                             ContentLength = mm.Length.ToString();
                         }
                     }
-                    //if (EnableInsiderDeveloper.Allowed()) { Log.Debug($"GZip Content-Length of response is {ContentLength} for {Context.Request.Path}"); }
+                    if (Launcher_Value.Launcher_Insider_Dev) { Log.Debug($"GZip Content-Length of response is {ContentLength} for {Context.Request.Path}"); }
 
                     /* Wine Mono is Unable to Allow the Game to Continue compared to its Windows CounterPart */
                     if (long.Parse(ContentLength) > 0 || Launcher_Value.System_Unix)
@@ -184,7 +194,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     }
                     else
                     {
-                        //if (EnableInsiderDeveloper.Allowed()) { Log.Debug($"GZip Content-Length is too small for {Context.Request.Path}"); }
+                        if (Launcher_Value.Launcher_Insider_Dev) { Log.Debug($"GZip Content-Length is too small for {Context.Request.Path}"); }
                         return true;
                     }
                 }
@@ -206,7 +216,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     Status = Context.Response.Headers.Keys.Any(x => x.Contains("Content-Encoding"));
                 }
 
-                //if (EnableInsiderDeveloper.Allowed() && !Status) { Log.Debug("Is Compressed? For " + Context.Request.Path + " " + Status); }
+                if (Launcher_Value.Launcher_Insider_Dev && !Status) { Log.Debug("Is Compressed? For " + Context.Request.Path + " " + Status); }
             }
             catch (Exception Error)
             {
@@ -245,7 +255,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     }
                 }
 
-                //if (EnableInsiderDeveloper.Allowed() && !Status) { Log.Debug("Content Type? For " + Context.Request.Path + " " + Status); }
+                if (Launcher_Value.Launcher_Insider_Dev && !Status) { Log.Debug("Content Type? For " + Context.Request.Path + " " + Status); }
             }
             catch (Exception Error)
             {
@@ -271,7 +281,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     }
                 }
 
-                //if (EnableInsiderDeveloper.Allowed() && !Status) { Log.Debug("Gzip Compatible? For " + Context.Request.Path + " " + Status); }
+                if (Launcher_Value.Launcher_Insider_Dev && !Status) { Log.Debug("Gzip Compatible? For " + Context.Request.Path + " " + Status); }
             }
             catch (Exception Error)
             {
