@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using SBRW.Launcher.Core.Recommended.Time_;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_
 {
@@ -89,31 +90,21 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             {
                 WebCallRejected("ContentLengthIsTooSmall", Context);
             }
-            else if (!Launcher_Value.Game_In_Event && (Session_Timer.Remaining <= 0))
+            else if (!Launcher_Value.Game_In_Event && (Time_Window.Session_Expired || (Time_Window.Legacy && Session_Timer.Remaining <= 0)))
             {
                 try
                 {
                     Launcher_Value.Game_In_Event_Bug = true;
-                    if (Launcher_Value.Game_Process != null)
-                    {
-                        if (!Launcher_Value.Game_Process.CloseMainWindow())
-                        {
-                            Launcher_Value.Game_Process.Kill();
-                        }
-                    }
-                    else
-                    {
-                        Process[] allOfThem = Process.GetProcessesByName("nfsw");
+                    Process[] allOfThem = Process.GetProcessesByName("nfsw");
 
-                        if (allOfThem != null && allOfThem.Any())
+                    if (allOfThem != null && allOfThem.Any())
+                    {
+                        foreach (Process oneProcess in allOfThem)
                         {
-                            foreach (Process oneProcess in allOfThem)
+                            bool LocalProcess = Process.GetProcessById(oneProcess.Id).CloseMainWindow();
+                            if (!LocalProcess)
                             {
-                                bool LocalProcess = Process.GetProcessById(oneProcess.Id).CloseMainWindow();
-                                if (!LocalProcess)
-                                {
-                                    Process.GetProcessById(oneProcess.Id).Kill();
-                                }
+                                Process.GetProcessById(oneProcess.Id).Kill();
                             }
                         }
                     }
