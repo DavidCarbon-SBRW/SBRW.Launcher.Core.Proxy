@@ -26,7 +26,9 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
         /// <summary>
         /// Set Proxy Port Number
         /// </summary>
-        public static int Custom_Port(string Custom_Port)
+        /// <param name="Custom_Port">Set a Custom Proxy Port</param>
+        /// <returns>Return Set Proxy Port</returns>
+        public static int Custom_Port(string Custom_Port = null)
         {
             bool UsingCustomProxyPort = false;
 
@@ -62,13 +64,6 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             }
 
             return Port;
-        }
-        /// <summary>
-        /// Set Proxy Port Number
-        /// </summary>
-        public static int Custom_Port()
-        {
-            return Custom_Port(null);
         }
     }
 }

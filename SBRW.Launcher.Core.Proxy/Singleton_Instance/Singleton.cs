@@ -6,7 +6,13 @@
     /// <typeparam name="T"></typeparam>
     public abstract class Singleton<T> where T : new()
     {
-        private static T _instance;
+        /// <summary>
+        /// 
+        /// </summary>
+        private static T _instance { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         private static readonly object InstanceLock = new object();
         /// <summary>
         /// Function/Process Instance

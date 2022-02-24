@@ -25,7 +25,13 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
     /// </summary>
     public class Proxy_Request : IApplicationStartup
     {
-        private readonly UTF8Encoding UTF8 = new UTF8Encoding(false);
+        private UTF8Encoding UTF8
+        {
+            get
+            {
+                return new UTF8Encoding(false);
+            }
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -151,7 +157,8 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 }
                 finally
                 {
-                    Presence_Game.State(path, responseBody, Local_Context.Request.Query);
+                    Presence_Game.State_Async(path, responseBody, Local_Context.Request.Query.ToDynamic());
+                    GC.Collect();
                 }
             }
         }
