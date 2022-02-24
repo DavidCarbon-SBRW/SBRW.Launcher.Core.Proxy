@@ -152,6 +152,8 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 Context.Response.Headers["Content-Length"] = mm.Length.ToString();
             }
 
+            GC.Collect();
+
             /* Different Solutions With Different OoM Errors */
             /* https://gist.github.com/DavidCarbon/e0b37e7bc58b5e1a46f6dfedc87c966d */
         }
@@ -178,8 +180,9 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     }
                     if (Launcher_Value.Launcher_Insider_Dev) { Log.Debug($"GZip Content-Length of response is {ContentLength} for {Context.Request.Path}"); }
 
-                    /* Wine Mono is Unable to Allow the Game to Continue compared to its Windows CounterPart */
-                    if (long.Parse(ContentLength) > 0 || Launcher_Value.System_Unix)
+                    /* Wine Mono is Unable to Allow the Game to Continue compared to its Windows CounterPart OR
+                     * If Logging Out to allow the Request to Go Through */
+                    if (Context.Request.Path.Contains("Engine.svc/User/SecureLogout") || long.Parse(ContentLength) > 0 || Launcher_Value.System_Unix)
                     {
                         return false;
                     }
@@ -194,6 +197,10 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             {
                 Log_Detail.OpenLog("ContentLengthIsTooSmall", null, Error, null, true);
                 return true;
+            }
+            finally
+            {
+                GC.Collect();
             }
         }
 
@@ -212,6 +219,10 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             catch (Exception Error)
             {
                 Log_Detail.OpenLog("ResponseIsCompressed", null, Error, null, true);
+            }
+            finally
+            {
+                GC.Collect();
             }
             return Status;
         }
@@ -252,6 +263,10 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             {
                 Log_Detail.OpenLog("ResponseIsCompatibleMimeType", null, Error, null, true);
             }
+            finally
+            {
+                GC.Collect();
+            }
             return Status;
         }
 
@@ -277,6 +292,10 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             catch (Exception Error)
             {
                 Log_Detail.OpenLog("RequestIsGzipCompatible", null, Error, null, true);
+            }
+            finally
+            {
+                GC.Collect();
             }
             return Status;
         }
