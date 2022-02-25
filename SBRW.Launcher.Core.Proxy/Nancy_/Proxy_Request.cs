@@ -157,7 +157,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 }
                 finally
                 {
-                    Presence_Game.State_Async(path, responseBody, Local_Context.Request.Query.ToDynamic());
+                    Presence_Game.State_Async(path, responseBody, Local_Context.Request.Query);
                     GC.Collect();
                 }
             }
