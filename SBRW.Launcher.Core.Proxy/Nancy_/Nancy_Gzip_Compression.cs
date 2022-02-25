@@ -101,11 +101,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     {
                         foreach (Process oneProcess in allOfThem)
                         {
-                            bool LocalProcess = Process.GetProcessById(oneProcess.Id).CloseMainWindow();
-                            if (!LocalProcess)
-                            {
-                                Process.GetProcessById(oneProcess.Id).Kill();
-                            }
+                            Process.GetProcessById(oneProcess.Id).Kill();
                         }
                     }
                 }
@@ -158,6 +154,29 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             /* https://gist.github.com/DavidCarbon/e0b37e7bc58b5e1a46f6dfedc87c966d */
         }
 
+        /// <summary>
+        /// Path String Checks to allow Certain Urls to Pass with Checks
+        /// </summary>
+        /// <remarks>Allow URL Only Requests with No Body Response</remarks>
+        /// <param name="Context_Request"></param>
+        /// <returns></returns>
+        private static bool Content_Request_ByPass(string Context_Request)
+        {
+            if (!string.IsNullOrWhiteSpace(Context_Request))
+            {
+                return Context_Request.Contains("/nfsw/Engine.svc/User/SecureLoginPersona") || 
+                    Context_Request.Contains("/nfsw/Engine.svc/User/SecureLogout") ||
+                   Context_Request.Contains("/nfsw/Engine.svc/events/notifycoincollected") || 
+                   Context_Request.Contains("/nfsw/Engine.svc/DriverPersona/UpdatePersonaPresence") ||
+                   Context_Request.Contains("/nfsw/Engine.svc/matchmaking/joinqueueracenow") || 
+                   Context_Request.Contains("/nfsw/Engine.svc/matchmaking/leavequeue") ||
+                   Context_Request.Contains("/nfsw/Engine.svc/event/launched") || 
+                   Context_Request.Contains("/nfsw/Engine.svc/powerups/activated");
+            }
+
+            return false;
+        }
+
         private static bool ContentLengthIsTooSmall(NancyContext Context)
         {
             try
@@ -181,8 +200,8 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     if (Launcher_Value.Launcher_Insider_Dev) { Log.Debug($"GZip Content-Length of response is {ContentLength} for {Context.Request.Path}"); }
 
                     /* Wine Mono is Unable to Allow the Game to Continue compared to its Windows CounterPart OR
-                     * If Logging Out to allow the Request to Go Through */
-                    if (Context.Request.Path.Contains("Engine.svc/User/SecureLogout") || long.Parse(ContentLength) > 0 || Launcher_Value.System_Unix)
+                     * Allow URL Only Requests with No Body Response */
+                    if (Content_Request_ByPass(Context.Request.Path) || long.Parse(ContentLength) > 0 || Launcher_Value.System_Unix)
                     {
                         return false;
                     }
