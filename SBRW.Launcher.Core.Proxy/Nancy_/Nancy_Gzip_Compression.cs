@@ -171,7 +171,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                    Context_Request.Contains("/nfsw/Engine.svc/matchmaking/joinqueueracenow") || 
                    Context_Request.Contains("/nfsw/Engine.svc/matchmaking/leavequeue") ||
                    Context_Request.Contains("/nfsw/Engine.svc/event/launched") || 
-                   Context_Request.Contains("/nfsw/Engine.svc/powerups/activated");
+                   Context_Request.Contains("/nfsw/Engine.svc/powerups/activated") ||
+                   Context_Request.Contains("/nfsw/Engine.svc/car/repair") ||
+                   Context_Request.Contains("/nfsw/Engine.svc/matchmaking/leavelobby") ||
+                   Context_Request.Contains("/nfsw/Engine.svc/Reporting/SendClientPingTime") ||
+                   Context_Request.Contains("/nfsw/Engine.svc/matchmaking/declineinvite");
             }
 
             return false;
