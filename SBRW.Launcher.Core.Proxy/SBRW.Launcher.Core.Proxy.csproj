@@ -37,7 +37,7 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.2" />
-    <PackageReference Include="SBRW.Launcher.Core" Version="0.0.34" />
+    <PackageReference Include="SBRW.Launcher.Core" Version="0.0.36" />
     <PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.0.19" />
     <PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.0.11" />
   </ItemGroup>
