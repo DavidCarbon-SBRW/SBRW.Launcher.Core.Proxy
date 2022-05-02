@@ -126,16 +126,16 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                                 }
                             }
                         }
-                        catch
+                        catch (Exception Error)
                         {
-
+                            Log_Detail.OpenLog("Close Request (Proxy)", null, Error, null, true);
                         }
 
                         Stop_Lock = false;
                     }
-                    catch
+                    catch (Exception Error)
                     {
-
+                        Log_Detail.OpenLog("Process Request (Proxy)", null, Error, null, true);
                     }
                 }
             }
