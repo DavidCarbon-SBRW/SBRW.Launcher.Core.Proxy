@@ -20,6 +20,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
     /// </summary>
     public class Nancy_Gzip_Compression : IApplicationStartup
     {
+        private static bool Stop_Lock { get; set; }
         /// <summary>
         /// 
         /// </summary>
@@ -74,42 +75,69 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
         private static void CheckForCompression(NancyContext Context)
         {
-            if (!RequestIsGzipCompatible(Context))
+            try
             {
-                WebCallRejected("RequestIsGzipCompatible", Context);
-            }
-            else if (ResponseIsCompressed(Context))
-            {
-                WebCallRejected("ResponseIsCompressed", Context);
-            }
-            else if (!ResponseIsCompatibleMimeType(Context))
-            {
-                WebCallRejected("ResponseIsCompatibleMimeType", Context);
-            }
-            else if (ContentLengthIsTooSmall(Context))
-            {
-                WebCallRejected("ContentLengthIsTooSmall", Context);
-            }
-            else if (!Launcher_Value.Game_In_Event && (Time_Window.Session_Expired || (Time_Window.Legacy && Session_Timer.Remaining <= 0)))
-            {
-                try
+                if (!RequestIsGzipCompatible(Context))
                 {
-                    Launcher_Value.Game_In_Event_Bug = true;
-                    Process[] allOfThem = Process.GetProcessesByName("nfsw");
-
-                    if (allOfThem != null && allOfThem.Any())
+                    WebCallRejected("RequestIsGzipCompatible", Context);
+                }
+                else if (ResponseIsCompressed(Context))
+                {
+                    WebCallRejected("ResponseIsCompressed", Context);
+                }
+                else if (!ResponseIsCompatibleMimeType(Context))
+                {
+                    WebCallRejected("ResponseIsCompatibleMimeType", Context);
+                }
+                else if (ContentLengthIsTooSmall(Context))
+                {
+                    WebCallRejected("ContentLengthIsTooSmall", Context);
+                }
+                else
+                {
+                    CompressResponse(Context);
+                }
+            }
+            finally
+            {
+                if (!Launcher_Value.Game_In_Event && (Time_Window.Session_Expired || (Time_Window.Legacy && Session_Timer.Remaining <= 0)) && !Stop_Lock)
+                {
+                    try
                     {
-                        foreach (Process oneProcess in allOfThem)
+                        Stop_Lock = Launcher_Value.Game_In_Event_Bug = true;
+                        Process[] Its_The_Law = Process.GetProcessesByName("nfsw");
+
+                        try
                         {
-                            Process.GetProcessById(oneProcess.Id).Kill();
+                            if (Its_The_Law != null)
+                            {
+                                if (Its_The_Law.Length > 0)
+                                {
+                                    foreach (Process Law_ID in Its_The_Law)
+                                    {
+                                        if (!Process.GetProcessById(Law_ID.Id).HasExited)
+                                        {
+                                            if (!Process.GetProcessById(Law_ID.Id).CloseMainWindow())
+                                            {
+                                                Process.GetProcessById(Law_ID.Id).Kill();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
+                        catch
+                        {
+
+                        }
+
+                        Stop_Lock = false;
+                    }
+                    catch
+                    {
+
                     }
                 }
-                catch { }
-            }
-            else
-            {
-                CompressResponse(Context);
             }
         }
 
