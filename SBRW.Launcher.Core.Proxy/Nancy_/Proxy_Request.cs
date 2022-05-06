@@ -106,13 +106,16 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
                     if (path == "/event/arbitration" && !string.IsNullOrWhiteSpace(requestBody))
                     {
-                        requestBody = requestBody.Replace("</TopSpeed>", "</TopSpeed><Konami>" + AC_Core.Status_Convert() + "</Konami>");
+                        requestBody = requestBody.Replace("</TopSpeed>", 
+                            "</TopSpeed><Konami>" + AC_Core.Status_Convert() + "</Konami><DiscordUID>" + 
+                            Launcher_Value.Launcher_Discord_UserID + "</DiscordUID>");
                         foreach (var header in Local_Context.Request.Headers)
                         {
                             if (header.Key.ToLowerInvariant() == "content-length")
                             {
                                 int KonamiCode = Convert.ToInt32(header.Value.First()) +
-                                    ("<Konami>" + AC_Core.Status_Convert() + "</Konami>").Length;
+                                    ("<Konami>" + AC_Core.Status_Convert() + "</Konami><DiscordUID>" +
+                            Launcher_Value.Launcher_Discord_UserID + "</DiscordUID>").Length;
                                 request = request.WithHeader(header.Key, KonamiCode);
                             }
                         }
