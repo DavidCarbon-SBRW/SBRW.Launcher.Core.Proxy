@@ -100,7 +100,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             }
             finally
             {
-                if (!Launcher_Value.Game_In_Event && (Time_Window.Session_Expired || (Time_Window.Legacy && Session_Timer.Remaining <= 0)) && !Stop_Lock)
+                if (!Launcher_Value.Game_In_Event && (Time_Window.Session_Expired || (Time_Window.Timer_Dynamic && Session_Timer.Remaining <= 0)) && !Stop_Lock)
                 {
                     try
                     {
