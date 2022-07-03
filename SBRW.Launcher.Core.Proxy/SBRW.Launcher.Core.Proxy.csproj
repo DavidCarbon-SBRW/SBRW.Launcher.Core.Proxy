@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net6.0-windows;net461;net472</TargetFrameworks>
     <LangVersion>8.0</LangVersion>  
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.24</Version>
+    <Version>0.0.25</Version>
     <Authors>Soapbox Race World - Launcher Division</Authors>
     <Company>Soapbox Race World</Company>
     <Description>A Game Launchers Proxy Library built within the .NET Standard Framework</Description>
@@ -30,7 +30,7 @@
     <!-- Required: Include symbols files if Self-Hosted Nuget Feed does not support symbol packages -->
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
-  
+
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 	<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
@@ -38,8 +38,11 @@
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.4" />
     <PackageReference Include="SBRW.Launcher.Core" Version="0.0.53" />
-    <PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.0.27" />
     <PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.0.11" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.0.27" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +50,10 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <ProjectReference Include="..\SBRW.Launcher.Core.Discord\SBRW.Launcher.Core.Discord\SBRW.Launcher.Core.Discord.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
