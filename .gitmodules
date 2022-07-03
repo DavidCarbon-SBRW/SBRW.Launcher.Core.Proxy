@@ -1,3 +1,4 @@
 [submodule "SBRW.Launcher.Core.Discord"]
 	path = SBRW.Launcher.Core.Discord
 	url = https://github.com/DavidCarbon-SBRW/SBRW.Launcher.Core.Discord
+	branch = development
