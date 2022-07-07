@@ -38,7 +38,7 @@
 
   <ItemGroup>
     <PackageReference Include="Flurl.Http" Version="3.2.4" />
-    <PackageReference Include="SBRW.Launcher.Core" Version="0.0.54" />
+    <PackageReference Include="SBRW.Launcher.Core" Version="0.0.55" />
     <PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.0.11" />
   </ItemGroup>
 
