@@ -107,7 +107,7 @@ namespace SBRW.Launcher.Core.Proxy.Log_
             }
             catch (Exception Error)
             {
-                Log_Detail.OpenLog("Communication", null, Error, null, true);
+                Log_Detail.Full("Communication", Error);
             }
         }
 

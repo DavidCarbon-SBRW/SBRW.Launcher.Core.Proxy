@@ -45,7 +45,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
         private TextResponse OnError(NancyContext context, Exception Error)
         {
             Log.Error("PROXY HANDLER: " + context.Request.Path);
-            Log_Detail.OpenLog("PROXY HANDLER", null, Error, null, true);
+            Log_Detail.Full("PROXY HANDLER", Error);
 
             Communication_Nancy.RecordEntry(Launcher_Value.Game_Server_Name, "LAUNCHER", CommunicationLogEntryType.Error,
                 new CommunicationLogLauncherError(Error.Message, context.Request.Path, context.Request.Method));
