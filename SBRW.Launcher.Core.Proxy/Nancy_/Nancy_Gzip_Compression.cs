@@ -34,7 +34,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
         private TextResponse OnError(NancyContext context, Exception Error)
         {
             Log.Error("PROXY HANDLER: " + context.Request.Path);
-            Log_Detail.OpenLog("PROXY HANDLER", null, Error, null, true);
+            Log_Detail.Full("PROXY HANDLER", Error);
 
             Communication_Nancy.RecordEntry(Launcher_Value.Game_Server_Name, "PROXY", CommunicationLogEntryType.Error,
                 new CommunicationLogLauncherError(Error.Message, context.Request.Path, context.Request.Method));
@@ -128,14 +128,14 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                         }
                         catch (Exception Error)
                         {
-                            Log_Detail.OpenLog("Close Request (Proxy)", null, Error, null, true);
+                            Log_Detail.Full("Close Request (Proxy)", Error);
                         }
 
                         Stop_Lock = false;
                     }
                     catch (Exception Error)
                     {
-                        Log_Detail.OpenLog("Process Request (Proxy)", null, Error, null, true);
+                        Log_Detail.Full("Process Request (Proxy)", Error);
                     }
                 }
             }
@@ -246,7 +246,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             }
             catch (Exception Error)
             {
-                Log_Detail.OpenLog("ContentLengthIsTooSmall", null, Error, null, true);
+                Log_Detail.Full("ContentLengthIsTooSmall", Error);
                 return true;
             }
             finally
@@ -269,7 +269,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             }
             catch (Exception Error)
             {
-                Log_Detail.OpenLog("ResponseIsCompressed", null, Error, null, true);
+                Log_Detail.Full("ResponseIsCompressed", Error);
             }
             finally
             {
@@ -312,7 +312,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             }
             catch (Exception Error)
             {
-                Log_Detail.OpenLog("ResponseIsCompatibleMimeType", null, Error, null, true);
+                Log_Detail.Full("ResponseIsCompatibleMimeType", Error);
             }
             finally
             {
@@ -342,7 +342,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             }
             catch (Exception Error)
             {
-                Log_Detail.OpenLog("RequestIsGzipCompatible", null, Error, null, true);
+                Log_Detail.Full("RequestIsGzipCompatible", Error);
             }
             finally
             {

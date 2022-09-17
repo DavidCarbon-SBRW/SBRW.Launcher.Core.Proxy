@@ -47,11 +47,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             }
             catch (AutomaticUrlReservationCreationFailureException Error)
             {
-                Log_Detail.OpenLog("PROXY [U.R.]", null, Error, null, true);
+                Log_Detail.Full("PROXY [U.R.]", Error);
             }
             catch (Exception Error)
             {
-                Log_Detail.OpenLog("PROXY", null, Error, null, true);
+                Log_Detail.Full("PROXY", Error);
             }
         }
         /// <summary>
