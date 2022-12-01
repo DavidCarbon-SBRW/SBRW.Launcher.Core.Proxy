@@ -176,8 +176,6 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 Context.Response.Headers["Content-Length"] = mm.Length.ToString();
             }
 
-            GC.Collect();
-
             /* Different Solutions With Different OoM Errors */
             /* https://gist.github.com/DavidCarbon/e0b37e7bc58b5e1a46f6dfedc87c966d */
         }
@@ -249,10 +247,6 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 Log_Detail.Full("ContentLengthIsTooSmall", Error);
                 return true;
             }
-            finally
-            {
-                GC.Collect();
-            }
         }
 
         private static bool ResponseIsCompressed(NancyContext Context)
@@ -271,10 +265,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             {
                 Log_Detail.Full("ResponseIsCompressed", Error);
             }
-            finally
-            {
-                GC.Collect();
-            }
+
             return Status;
         }
 
@@ -314,10 +305,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             {
                 Log_Detail.Full("ResponseIsCompatibleMimeType", Error);
             }
-            finally
-            {
-                GC.Collect();
-            }
+
             return Status;
         }
 
@@ -344,10 +332,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             {
                 Log_Detail.Full("RequestIsGzipCompatible", Error);
             }
-            finally
-            {
-                GC.Collect();
-            }
+
             return Status;
         }
     }
