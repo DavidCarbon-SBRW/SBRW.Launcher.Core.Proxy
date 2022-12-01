@@ -97,7 +97,7 @@ namespace SBRW.Launcher.Core.Proxy.Log_
                     Category = CAT,
                     Data = DATA,
                     Type = CallMethod(TYPE),
-                    RecordedAt = Time_Clock.GetTime("Now - UTC Time (Offset)")
+                    RecordedAt = Time_Clock.GetTime(4)
                 };
 
                 File.AppendAllLines(Log_Location.LogCommunication, new List<string>
