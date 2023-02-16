@@ -20,9 +20,23 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
         /// <returns>True or False</returns>
         public static bool Running() => Proxy_Server.Host_Service != null;
         /// <summary>
+        /// Determines if localhost uris are rewritten to http://+:port/ style uris to 
+        /// allow for listening on all ports, but requiring either a namespace reservation, or admin access
+        /// </summary>
+        public static bool Rewrite_Localhost { get; set; } = true;
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool Portless { get; set; } = false;
+        /// <summary>
         /// Cached Custom Port
         /// </summary>
         public static int Port { get; set; } = 2017;
+        /// <summary>
+        /// Cached Domain String
+        /// </summary>
+        /// <remarks></remarks>
+        public static string Domain { get; set; } = "127.0.0.1";
         /// <summary>
         /// Set Proxy Port Number
         /// </summary>

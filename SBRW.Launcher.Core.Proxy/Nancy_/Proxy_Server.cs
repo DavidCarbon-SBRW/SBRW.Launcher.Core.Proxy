@@ -34,14 +34,14 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     HostConfiguration Configs = new HostConfiguration()
                     {
                         AllowChunkedEncoding = false,
-                        RewriteLocalhost = false,
+                        RewriteLocalhost = Proxy_Settings.Rewrite_Localhost,
                         UrlReservations = new UrlReservations()
                         {
                             CreateAutomatically = true
                         }
                     };
 
-                    Host_Service = new NancyHost(new Uri("http://127.0.0.1:" + Proxy_Settings.Port), new Nancy_Bootstrapper(), Configs);
+                    Host_Service = new NancyHost(new Uri("http://" + Proxy_Settings.Domain + (Proxy_Settings.Portless ? "" : ":" + Proxy_Settings.Port)), new Nancy_Bootstrapper(), Configs);
                     Host_Service.Start();
                 }
             }
