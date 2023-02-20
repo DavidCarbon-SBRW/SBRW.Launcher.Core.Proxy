@@ -40,6 +40,14 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
         /// <summary>
         /// Set Proxy Port Number
         /// </summary>
+        /// <returns>Return Set Proxy Port</returns>
+        public static int Custom_Port()
+        {
+            return Custom_Port(Port.ToString());
+        }
+        /// <summary>
+        /// Set Proxy Port Number
+        /// </summary>
         /// <param name="Custom_Port">Set a Custom Proxy Port</param>
         /// <returns>Return Set Proxy Port</returns>
         public static int Custom_Port(string Custom_Port = null)
@@ -52,7 +60,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
                 if (isNumeric)
                 {
-                    if (Port > 0)
+                    if (Converted_Port > 0)
                     {
                         Port = Converted_Port;
                         UsingCustomProxyPort = true;
@@ -71,7 +79,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 }
                 else
                 {
-                    Port = new Random().Next(2017, 2022);
+                    Port = new Random().Next(2017, 2024);
                 }
 
                 Log.Info("Proxy Settings:".ToUpper() + " Random Generated Default Port -> " + Port);
