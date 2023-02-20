@@ -29,8 +29,6 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 }
                 else
                 {
-                    Log.Info("PROXY: Local Proxy Server has Fully Initialized (" + From + ")");
-
                     HostConfiguration Configs = new HostConfiguration()
                     {
                         AllowChunkedEncoding = false,
@@ -41,8 +39,10 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                         }
                     };
 
-                    Host_Service = new NancyHost(new Uri("http://" + Proxy_Settings.Domain + (Proxy_Settings.Portless ? "" : ":" + Proxy_Settings.Port)), new Nancy_Bootstrapper(), Configs);
+                    Host_Service = new NancyHost(new Uri("http://" + Proxy_Settings.Domain + (Proxy_Settings.Portless ? "" : ":" + Proxy_Settings.Custom_Port())), new Nancy_Bootstrapper(), Configs);
                     Host_Service.Start();
+
+                    Log.Info("PROXY: Local Proxy Server has Fully Initialized (" + From + ")");
                 }
             }
             catch (AutomaticUrlReservationCreationFailureException Error)
