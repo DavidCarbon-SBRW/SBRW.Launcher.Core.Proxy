@@ -1,12 +1,40 @@
 ﻿using Newtonsoft.Json;
 using SBRW.Launcher.Core.Extension.Logging_;
 using SBRW.Launcher.Core.Extension.Time_;
+using SBRW.Launcher.Core.Proxy.Nancy_;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace SBRW.Launcher.Core.Proxy.Log_
 {
+    /// <summary>
+    /// Log File Save Entry Type
+    /// </summary>
+    public enum CommunicationLogRecord
+    {
+        /// <summary>
+        /// Saves All Recorded Entry Types
+        /// </summary>
+        All,
+        /// <summary>
+        /// Saves Errors Entry Types
+        /// </summary>
+        Errors,
+        /// <summary>
+        /// Saves Requests Entry Types
+        /// </summary>
+        Requests,
+        /// <summary>
+        /// Saves Responses Entry Types
+        /// </summary>
+        Responses,
+        /// <summary>
+        /// Saves No Entry Types
+        /// </summary>
+        None
+    }
+
     internal enum CommunicationLogEntryType
     {
         Request,
@@ -80,34 +108,37 @@ namespace SBRW.Launcher.Core.Proxy.Log_
     {
         public static void RecordEntry(string ID, string CAT, CommunicationLogEntryType TYPE, ICommunicationLogData DATA)
         {
-            try
+            if(!Proxy_Settings.Log_Mode.Equals(CommunicationLogRecord.None))
             {
-                if (!Directory.Exists(Log_Location.LogCurrentFolder))
+                try
                 {
-                    Directory.CreateDirectory(Log_Location.LogCurrentFolder);
+                    if (!Directory.Exists(Log_Location.LogCurrentFolder))
+                    {
+                        Directory.CreateDirectory(Log_Location.LogCurrentFolder);
+                    }
                 }
-            }
-            catch { }
+                catch { }
 
-            try
-            {
-                CommunicationLogEntry Entry = new CommunicationLogEntry
+                try
                 {
-                    ServerId = ID,
-                    Category = CAT,
-                    Data = DATA,
-                    Type = CallMethod(TYPE),
-                    RecordedAt = Time_Clock.GetTime(4)
-                };
+                    CommunicationLogEntry Entry = new CommunicationLogEntry
+                    {
+                        ServerId = ID,
+                        Category = CAT,
+                        Data = DATA,
+                        Type = CallMethod(TYPE),
+                        RecordedAt = Time_Clock.GetTime(4)
+                    };
 
-                File.AppendAllLines(Log_Location.LogCommunication, new List<string>
+                    File.AppendAllLines(Log_Location.LogCommunication, new List<string>
+                    {
+                        JsonConvert.SerializeObject(Entry, Formatting.Indented)
+                    });
+                }
+                catch (Exception Error)
                 {
-                    JsonConvert.SerializeObject(Entry, Formatting.Indented)
-                });
-            }
-            catch (Exception Error)
-            {
-                Log_Detail.Full("Communication", Error);
+                    Log_Detail.Full("Communication", Error);
+                }
             }
         }
 

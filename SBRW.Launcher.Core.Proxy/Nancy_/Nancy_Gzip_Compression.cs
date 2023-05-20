@@ -36,8 +36,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             Log.Error("PROXY HANDLER: " + context.Request.Path);
             Log_Detail.Full("PROXY HANDLER", Error);
 
-            Communication_Nancy.RecordEntry(Launcher_Value.Game_Server_Name, "PROXY", CommunicationLogEntryType.Error,
+            if (Proxy_Settings.Log_Mode.Equals(CommunicationLogRecord.Errors) || Proxy_Settings.Log_Mode.Equals(CommunicationLogRecord.All))
+            {
+                Communication_Nancy.RecordEntry(Launcher_Value.Game_Server_Name, "PROXY", CommunicationLogEntryType.Error,
                 new CommunicationLogLauncherError(Error.Message, context.Request.Path, context.Request.Method));
+            }
 
             context.Request.Dispose();
 
@@ -69,8 +72,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     break;
             }
 
-            Communication_Nancy.RecordEntry(Launcher_Value.Game_Server_Name, "LAUNCHER", CommunicationLogEntryType.Rejected,
-            new CommunicationLogLauncherError(ErrorReason, Context.Request.Path, Context.Request.Method));
+            if (Proxy_Settings.Log_Mode.Equals(CommunicationLogRecord.Requests) || Proxy_Settings.Log_Mode.Equals(CommunicationLogRecord.All))
+            {
+                Communication_Nancy.RecordEntry(Launcher_Value.Game_Server_Name, "LAUNCHER", CommunicationLogEntryType.Rejected,
+                new CommunicationLogLauncherError(ErrorReason, Context.Request.Path, Context.Request.Method));
+            }
         }
 
         private static void CheckForCompression(NancyContext Context)

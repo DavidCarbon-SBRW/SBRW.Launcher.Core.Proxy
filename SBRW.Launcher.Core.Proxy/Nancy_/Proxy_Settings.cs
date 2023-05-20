@@ -1,4 +1,5 @@
 ﻿using SBRW.Launcher.Core.Extension.Logging_;
+using SBRW.Launcher.Core.Proxy.Log_;
 using System;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_
@@ -8,6 +9,10 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
     /// </summary>
     public class Proxy_Settings
     {
+        /// <summary>
+        /// Proxy Log Mode
+        /// </summary>
+        public static CommunicationLogRecord Log_Mode { get; set; } = CommunicationLogRecord.All;
         /// <summary>
         /// Informs the Proxy to Continue with Error
         /// </summary>
@@ -79,7 +84,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 }
                 else
                 {
-                    Port = new Random().Next(2017, 2024);
+                    Port = new Random().Next(2017, 2029);
                 }
 
                 Log.Info("Proxy Settings:".ToUpper() + " Random Generated Default Port -> " + Port);

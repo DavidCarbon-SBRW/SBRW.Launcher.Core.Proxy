@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net6.0-windows;net461;net472</TargetFrameworks>
     <LangVersion>8.0</LangVersion>  
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.3.0</Version>
+    <Version>0.3.1</Version>
     <Authors>Soapbox Race World - Launcher Division</Authors>
     <Company>Soapbox Race World</Company>
     <Description>A Game Launchers Proxy Library built within the .NET Standard Framework</Description>
@@ -29,6 +29,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <!-- Required: Include symbols files if Self-Hosted Nuget Feed does not support symbol packages -->
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <UserSecretsId>cbfee494-f408-4993-8787-dc9372f53e0d</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
