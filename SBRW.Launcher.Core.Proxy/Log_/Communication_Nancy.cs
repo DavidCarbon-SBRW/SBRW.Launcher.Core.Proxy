@@ -16,23 +16,23 @@ namespace SBRW.Launcher.Core.Proxy.Log_
         /// <summary>
         /// Saves All Recorded Entry Types
         /// </summary>
-        All,
+        All = 1,
         /// <summary>
         /// Saves Errors Entry Types
         /// </summary>
-        Errors,
+        Errors = 2,
         /// <summary>
         /// Saves Requests Entry Types
         /// </summary>
-        Requests,
+        Requests = 4,
         /// <summary>
         /// Saves Responses Entry Types
         /// </summary>
-        Responses,
+        Responses = 3,
         /// <summary>
         /// Saves No Entry Types
         /// </summary>
-        None
+        None = 0
     }
 
     internal enum CommunicationLogEntryType
