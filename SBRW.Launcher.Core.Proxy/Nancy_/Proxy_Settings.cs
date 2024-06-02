@@ -14,6 +14,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
         /// </summary>
         public static CommunicationLogRecord Log_Mode { get; set; } = CommunicationLogRecord.All;
         /// <summary>
+        /// Gzip Version Handler
+        /// </summary>
+        /// <remarks>Produces varying results on different systems</remarks>
+        public static GzipVersion Gzip_Version { get; set; } = GzipVersion.Three;
+        /// <summary>
         /// Informs the Proxy to Continue with Error
         /// </summary>
         /// <remarks>Sets the <see cref="SBRW.Nancy.HttpStatusCode">Status Code</see> to OK (200)</remarks>

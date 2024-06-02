@@ -16,7 +16,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using UrlFlurl = Flurl.Url;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_
 {
@@ -77,7 +76,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 {
                     path = path.Substring("/nfsw/Engine.svc".Length);
 
-                    UrlFlurl resolvedUrl = new UrlFlurl(Launcher_Value.Game_Server_IP).AppendPathSegment(path, false);
+                    Flurl.Url resolvedUrl = new Flurl.Url(Launcher_Value.Game_Server_IP).AppendPathSegment(path, false);
 
                     foreach (var queryParamName in Local_Context.Request.Query)
                     {
@@ -112,16 +111,15 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
                     if (path == "/event/arbitration" && !string.IsNullOrWhiteSpace(requestBody))
                     {
-                        requestBody = requestBody.Replace("</TopSpeed>", 
-                            "</TopSpeed><Konami>" + AC_Core.Status_Convert() + "</Konami><DiscordUID>" + 
-                            Launcher_Value.Launcher_Discord_UserID + "</DiscordUID>");
+                        requestBody = requestBody.Replace("</TopSpeed>",
+                            $"</TopSpeed><Konami>{AC_Core.Status_Convert()}</Konami><DiscordUID>{Launcher_Value.Launcher_Discord_UserID}</DiscordUID>");
+
                         foreach (var header in Local_Context.Request.Headers)
                         {
                             if (header.Key.ToLowerInvariant() == "content-length")
                             {
                                 int KonamiCode = Convert.ToInt32(header.Value.First()) +
-                                    ("<Konami>" + AC_Core.Status_Convert() + "</Konami><DiscordUID>" +
-                            Launcher_Value.Launcher_Discord_UserID + "</DiscordUID>").Length;
+                                    $"<Konami>{AC_Core.Status_Convert()}</Konami><DiscordUID>{Launcher_Value.Launcher_Discord_UserID}</DiscordUID>".Length;
                                 request = request.WithHeader(header.Key, KonamiCode);
                             }
                         }
@@ -130,18 +128,18 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     switch (method)
                     {
                         case "GET":
-                            responseMessage = await request.GetAsync(cancellationToken);
+                            responseMessage = await request.GetAsync(cancellationToken).ConfigureAwait(false);
                             break;
                         case "POST":
                             responseMessage = await request.PostAsync(new CapturedStringContent(requestBody),
-                                cancellationToken);
+                                cancellationToken).ConfigureAwait(false);
                             break;
                         case "PUT":
                             responseMessage = await request.PutAsync(new CapturedStringContent(requestBody),
-                                cancellationToken);
+                                cancellationToken).ConfigureAwait(false);
                             break;
                         case "DELETE":
-                            responseMessage = await request.DeleteAsync(cancellationToken);
+                            responseMessage = await request.DeleteAsync(cancellationToken).ConfigureAwait(false);
                             break;
                         default:
                             Log.Error("PROXY HANDLER: Cannot handle Request Method " + method);
