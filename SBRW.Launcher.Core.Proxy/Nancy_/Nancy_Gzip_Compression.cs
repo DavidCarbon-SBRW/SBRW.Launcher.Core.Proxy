@@ -16,6 +16,32 @@ using SBRW.Launcher.Core.Recommended.Time_;
 namespace SBRW.Launcher.Core.Proxy.Nancy_
 {
     /// <summary>
+    /// Log File Save Entry Type
+    /// </summary>
+    public enum GzipVersion
+    {
+        /// <summary>
+        /// 2.3.X Revision of GZIP Handler
+        /// </summary>
+        Four = 4,
+        /// <summary>
+        /// 2.1.8.X Revision of GZIP Handler
+        /// </summary>
+        Three = 0,
+        /// <summary>
+        /// 2.1.7.2 Revision of GZIP Handler
+        /// </summary>
+        Two = 2,
+        /// <summary>
+        /// 2.1.6.9 Slight Revision of GZIP Handler
+        /// </summary>
+        OneV2 = 3,
+        /// <summary>
+        /// 2.1.6.X Revision of GZIP Handler
+        /// </summary>
+        One = 1,
+    }
+    /// <summary>
     /// 
     /// </summary>
     public class Nancy_Gzip_Compression : IApplicationStartup
@@ -30,7 +56,12 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             Data_Pipelines.AfterRequest += CheckForCompression;
             Data_Pipelines.OnError += OnError;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="Error"></param>
+        /// <returns></returns>
         private TextResponse OnError(NancyContext context, Exception Error)
         {
             Log.Error("PROXY HANDLER: " + context.Request.Path);
@@ -46,7 +77,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
             return new TextResponse(!Proxy_Settings.Ignore_Errors ? HttpStatusCode.BadRequest : HttpStatusCode.OK, Error.Message);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Reason"></param>
+        /// <param name="Context"></param>
         private static void WebCallRejected(string Reason, NancyContext Context)
         {
             string ErrorReason = "[Launcher to Game Client] Web Call Rejected. ";
@@ -78,7 +113,10 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 new CommunicationLogLauncherError(ErrorReason, Context.Request.Path, Context.Request.Method));
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Context"></param>
         private static void CheckForCompression(NancyContext Context)
         {
             try
@@ -146,46 +184,127 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 }
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Context"></param>
+        /// <remarks>Based on Different <see href="https://gist.github.com/DavidCarbon/e0b37e7bc58b5e1a46f6dfedc87c966d">Solutions</see> 
+        /// With Different OoM Errors</remarks>
         private static void CompressResponse(NancyContext Context)
         {
-            bool Deflate = Context.Request.Headers.AcceptEncoding.Any(x => x.Contains("deflate"));
-
-            Context.Response.Headers["Content-Encoding"] = Deflate ? "deflate" : "gzip";
-            Context.Response.Headers["Connection"] = "close";
-
-            var FinalResponse = Context.Response.Contents;
-
-            Context.Response.Contents = responseStream =>
+            if (Proxy_Settings.Gzip_Version == GzipVersion.One)
             {
-                if (Deflate)
-                {
-                    using (DeflateStream Compressed = new DeflateStream(responseStream, CompressionLevel.Optimal, true))
-                    {
-                        FinalResponse(Compressed);
-                    }
-                }
-                else
-                {
-                    using (GZipStream Compress = new GZipStream(responseStream, CompressionMode.Compress, true))
-                    {
-                        FinalResponse(Compress);
-                    }
-                }
-            };
+                Context.Response.Headers["Content-Encoding"] = "gzip";
+                Context.Response.Headers["Connection"] = "close";
 
-            using (MemoryStream mm = new MemoryStream())
-            {
-                Context.Response.Contents.Invoke(mm);
-                mm.Flush();
-
-                Context.Response.Headers["Content-Length"] = mm.Length.ToString();
+                /* Ask System to Allocate Memory */
+                var Modded_Content = new MemoryStream();
+                /* Response Contents is now feed into Allocated Memory */
+                Context.Response.Contents(Modded_Content);
+                /* Set Position for data in Allocated Memory */
+                Modded_Content.Position = 0;
+                /* Read the Contents from Allocated Memory */
+                Context.Response.Contents = Response_Stream =>
+                {
+                    using (var gzip = new GZipStream(Response_Stream, CompressionMode.Compress, true))
+                    {
+                        /* Instead of Feeding content Raw (Which can potentially cause OoM) Lets read it from Allocated Memory */
+                        gzip.Write(Modded_Content.ToArray(), 0, (int)Modded_Content.Length);
+                    }
+                };
             }
+            else if (Proxy_Settings.Gzip_Version == GzipVersion.Two)
+            {
+                Context.Response.Headers["Content-Encoding"] = "gzip";
+                Context.Response.Headers["Connection"] = "close";
 
-            /* Different Solutions With Different OoM Errors */
-            /* https://gist.github.com/DavidCarbon/e0b37e7bc58b5e1a46f6dfedc87c966d */
+                var Modded_Content = Context.Response.Contents;
+                Context.Response.Contents = responseStream =>
+                {
+                    using (var compression = new GZipStream(responseStream, CompressionMode.Compress))
+                    {
+                        Modded_Content(compression);
+                    }
+                };
+            }
+            else if (Proxy_Settings.Gzip_Version == GzipVersion.OneV2)
+            {
+                Context.Response.Headers["Content-Encoding"] = "gzip";
+                Context.Response.Headers["Connection"] = "close";
+
+                /* Ask System to Allocate Memory */
+                var Modded_Content = new MemoryStream();
+                /* Response Contents is now feed into Allocated Memory */
+                Context.Response.Contents(Modded_Content);
+                /* Set Position for data in Allocated Memory */
+                Modded_Content.Position = 0;
+                /* Read the Contents from Allocated Memory */
+                Context.Response.Contents = Response_Stream =>
+                {
+                    /* Difference here is that we are not allowing the stream to remain open compared to Version One */
+                    using (var gzip = new GZipStream(Response_Stream, CompressionMode.Compress))
+                    {
+                        /* Instead of Feeding content Raw (Which can potentially cause OoM) Lets read it from Allocated Memory */
+                        gzip.Write(Modded_Content.ToArray(), 0, (int)Modded_Content.Length);
+                    }
+                };
+            }
+            else
+            {
+                bool Deflate = Context.Request.Headers.AcceptEncoding.Any(x => x.Contains("deflate"));
+
+                Context.Response.Headers["Content-Encoding"] = Deflate ? "deflate" : "gzip";
+                Context.Response.Headers["Connection"] = "close";
+
+                var Modded_Content = Context.Response.Contents;
+
+                Context.Response.Contents = Response_Stream =>
+                {
+                    if (Proxy_Settings.Gzip_Version == GzipVersion.Four)
+                    {
+                        using (MemoryStream Memory_Stream = new MemoryStream())
+                        {
+                            if (Deflate)
+                            {
+                                using (DeflateStream Compressed = new DeflateStream(Memory_Stream, CompressionLevel.Optimal, true))
+                                {
+                                    Modded_Content(Compressed);
+                                }
+                            }
+                            else
+                            {
+                                using (GZipStream Compress = new GZipStream(Memory_Stream, CompressionMode.Compress, true))
+                                {
+                                    Modded_Content(Compress);
+                                }
+                            }
+
+                            // Set the correct Content-Length after compression
+                            Memory_Stream.Position = 0;
+                            Context.Response.Headers["Content-Length"] = Memory_Stream.Length.ToString();
+                            Memory_Stream.CopyTo(Response_Stream);
+                        }
+                    }
+                    else
+                    {
+                        if (Deflate)
+                        {
+                            using (DeflateStream Compressed = new DeflateStream(Response_Stream, CompressionLevel.Optimal, true))
+                            {
+                                Modded_Content(Compressed);
+                            }
+                        }
+                        else
+                        {
+                            using (GZipStream Compress = new GZipStream(Response_Stream, CompressionMode.Compress, true))
+                            {
+                                Modded_Content(Compress);
+                            }
+                        }
+                    }
+                };
+            }
         }
-
         /// <summary>
         /// Path String Checks to allow Certain Urls to Pass with Checks
         /// </summary>
@@ -212,7 +331,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
             return false;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Context"></param>
+        /// <returns></returns>
         private static bool ContentLengthIsTooSmall(NancyContext Context)
         {
             try
@@ -254,7 +377,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 return true;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Context"></param>
+        /// <returns></returns>
         private static bool ResponseIsCompressed(NancyContext Context)
         {
             bool Status = false;
@@ -274,7 +401,9 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
             return Status;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         private static IList<string> MimeTypes { get; set; } = new List<string>
         {
             "text/plain",
@@ -287,7 +416,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             "application/xml;charset=UTF-8",
             "application/xml"
         };
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Context"></param>
+        /// <returns></returns>
         private static bool ResponseIsCompatibleMimeType(NancyContext Context)
         {
             bool Status = false;
@@ -314,7 +447,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
             return Status;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="Context"></param>
+        /// <returns></returns>
         private static bool RequestIsGzipCompatible(NancyContext Context)
         {
             bool Status = false;
