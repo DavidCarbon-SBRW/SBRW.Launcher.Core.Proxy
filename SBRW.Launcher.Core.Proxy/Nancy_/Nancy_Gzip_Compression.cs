@@ -192,7 +192,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
         /// With Different OoM Errors</remarks>
         private static void CompressResponse(NancyContext Context)
         {
-            if (Proxy_Settings.Gzip_Version == GzipVersion.One)
+            if (Proxy_Settings.Gzip_Version == GzipVersion.One || Proxy_Settings.Gzip_Version == GzipVersion.OneV2)
             {
                 Context.Response.Headers["Content-Encoding"] = "gzip";
                 Context.Response.Headers["Connection"] = "close";
@@ -206,7 +206,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 /* Read the Contents from Allocated Memory */
                 Context.Response.Contents = Response_Stream =>
                 {
-                    using (var gzip = new GZipStream(Response_Stream, CompressionMode.Compress, true))
+                    using (var gzip = new GZipStream(Response_Stream, CompressionMode.Compress, Proxy_Settings.Gzip_Version == GzipVersion.One))
                     {
                         /* Instead of Feeding content Raw (Which can potentially cause OoM) Lets read it from Allocated Memory */
                         gzip.Write(Modded_Content.ToArray(), 0, (int)Modded_Content.Length);
@@ -224,28 +224,6 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     using (var compression = new GZipStream(responseStream, CompressionMode.Compress))
                     {
                         Modded_Content(compression);
-                    }
-                };
-            }
-            else if (Proxy_Settings.Gzip_Version == GzipVersion.OneV2)
-            {
-                Context.Response.Headers["Content-Encoding"] = "gzip";
-                Context.Response.Headers["Connection"] = "close";
-
-                /* Ask System to Allocate Memory */
-                var Modded_Content = new MemoryStream();
-                /* Response Contents is now feed into Allocated Memory */
-                Context.Response.Contents(Modded_Content);
-                /* Set Position for data in Allocated Memory */
-                Modded_Content.Position = 0;
-                /* Read the Contents from Allocated Memory */
-                Context.Response.Contents = Response_Stream =>
-                {
-                    /* Difference here is that we are not allowing the stream to remain open compared to Version One */
-                    using (var gzip = new GZipStream(Response_Stream, CompressionMode.Compress))
-                    {
-                        /* Instead of Feeding content Raw (Which can potentially cause OoM) Lets read it from Allocated Memory */
-                        gzip.Write(Modded_Content.ToArray(), 0, (int)Modded_Content.Length);
                     }
                 };
             }
