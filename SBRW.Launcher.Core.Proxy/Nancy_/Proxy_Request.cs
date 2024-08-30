@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_
 {
@@ -24,13 +25,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
     /// </summary>
     public class Proxy_Request : IApplicationStartup
     {
-        private UTF8Encoding UTF8
-        {
-            get
-            {
-                return new UTF8Encoding(false);
-            }
-        }
+        private static UTF8Encoding UTF8 = new UTF8Encoding(false);
         /// <summary>
         /// 
         /// </summary>
@@ -52,8 +47,6 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 new CommunicationLogLauncherError(Error.Message, context.Request.Path, context.Request.Method));
             }
 
-            context.Request.Dispose();
-
             return new TextResponse(!Proxy_Settings.Ignore_Errors ? HttpStatusCode.BadRequest : HttpStatusCode.OK, Error.Message);
         }
 
@@ -70,6 +63,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             }
             else
             {
+                /* Used in the Try & Finally Function Calls */
                 string responseBody = string.Empty;
 
                 try
@@ -107,8 +101,6 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                         new CommunicationLogRequest(requestBody, resolvedUrl.ToString(), method));
                     }
 
-                    IFlurlResponse responseMessage;
-
                     if (path == "/event/arbitration" && !string.IsNullOrWhiteSpace(requestBody))
                     {
                         requestBody = requestBody.Replace("</TopSpeed>",
@@ -125,21 +117,23 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                         }
                     }
 
+                    IFlurlResponse responseMessage;
+
                     switch (method)
                     {
                         case "GET":
-                            responseMessage = await request.GetAsync(cancellationToken).ConfigureAwait(false);
+                            responseMessage = await request.GetAsync(HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
                             break;
                         case "POST":
-                            responseMessage = await request.PostAsync(new CapturedStringContent(requestBody),
+                            responseMessage = await request.PostAsync(new CapturedStringContent(requestBody), HttpCompletionOption.ResponseContentRead,
                                 cancellationToken).ConfigureAwait(false);
                             break;
                         case "PUT":
-                            responseMessage = await request.PutAsync(new CapturedStringContent(requestBody),
+                            responseMessage = await request.PutAsync(new CapturedStringContent(requestBody), HttpCompletionOption.ResponseContentRead,
                                 cancellationToken).ConfigureAwait(false);
                             break;
                         case "DELETE":
-                            responseMessage = await request.DeleteAsync(cancellationToken).ConfigureAwait(false);
+                            responseMessage = await request.DeleteAsync(HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
                             break;
                         default:
                             Log.Error("PROXY HANDLER: Cannot handle Request Method " + method);
