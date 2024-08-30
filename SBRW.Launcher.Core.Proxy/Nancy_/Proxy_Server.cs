@@ -2,6 +2,7 @@
 using SBRW.Launcher.Core.Proxy.Singleton_Instance;
 using SBRW.Nancy.Hosting.Self;
 using System;
+using System.IO;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_
 {
@@ -74,6 +75,20 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 Host_Service.Stop();
                 Host_Service.Dispose();
                 Host_Service = null;
+
+                try
+                {
+                    /* Lets Remove the Proxy Files for Less Change of an Issue */
+                    string Directory_TEMP_Path = Path.Combine(Path.GetTempPath(), "Soapbox Race World", "Nancy");
+                    if (Directory.Exists(Directory_TEMP_Path))
+                    {
+                        Directory.Delete(Directory_TEMP_Path, true);
+                    }
+                }
+                catch (Exception Error)
+                {
+                    Log_Detail.Full("PROXY [T.F.D]", Error);
+                }
             }
             else
             {

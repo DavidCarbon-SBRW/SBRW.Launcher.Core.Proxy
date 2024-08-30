@@ -30,6 +30,7 @@
 		<!-- Required: Include symbols files if Self-Hosted Nuget Feed does not support symbol packages -->
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 		<UserSecretsId>cbfee494-f408-4993-8787-dc9372f53e0d</UserSecretsId>
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -39,7 +40,7 @@
 	<ItemGroup>
 		<PackageReference Include="Flurl.Http" Version="4.0.2" />
 		<PackageReference Include="SBRW.Launcher.Core" Version="0.5.1" />
-		<PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.1.0" />
+		<PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.1.1" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)'=='Release'">
