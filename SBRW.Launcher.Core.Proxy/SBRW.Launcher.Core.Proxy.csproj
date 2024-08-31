@@ -39,12 +39,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="Flurl.Http" Version="4.0.2" />
-		<PackageReference Include="SBRW.Launcher.Core" Version="0.5.1" />
+		<PackageReference Include="SBRW.Launcher.Core" Version="0.5.2" />
 		<PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.1.1" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)'=='Release'">
-		<PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.5.1" />
+		<PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.5.2" />
 	</ItemGroup>
 
 	<ItemGroup>

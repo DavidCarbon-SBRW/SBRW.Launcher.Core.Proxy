@@ -78,7 +78,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
                 try
                 {
-                    /* Lets Remove the Proxy Files for Less Change of an Issue */
+                    /* Lets Remove the Proxy Files for Less Chance of an Issue */
                     string Directory_TEMP_Path = Path.Combine(Path.GetTempPath(), "Soapbox Race World", "Nancy");
                     if (Directory.Exists(Directory_TEMP_Path))
                     {
