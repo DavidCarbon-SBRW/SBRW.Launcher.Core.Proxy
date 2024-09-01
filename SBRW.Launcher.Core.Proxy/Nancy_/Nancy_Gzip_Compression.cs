@@ -73,8 +73,6 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                 new CommunicationLogLauncherError(Error.Message, context.Request.Path, context.Request.Method));
             }
 
-            context.Request.Dispose();
-
             return new TextResponse(!Proxy_Settings.Ignore_Errors ? HttpStatusCode.BadRequest : HttpStatusCode.OK, Error.Message);
         }
         /// <summary>

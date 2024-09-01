@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net6.0-windows;net461;net472</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net6.0-windows;net8.0-windows;net461;net472</TargetFrameworks>
 		<LangVersion>8.0</LangVersion>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>0.6.0</Version>
+		<Version>0.7.0</Version>
 		<Authors>Soapbox Race World - Launcher Division</Authors>
 		<Company>Soapbox Race World</Company>
 		<Description>A Game Launchers Proxy Library built within the .NET Standard Framework</Description>
@@ -30,6 +30,7 @@
 		<!-- Required: Include symbols files if Self-Hosted Nuget Feed does not support symbol packages -->
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 		<UserSecretsId>cbfee494-f408-4993-8787-dc9372f53e0d</UserSecretsId>
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -37,13 +38,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Flurl.Http" Version="3.2.4" />
-		<PackageReference Include="SBRW.Launcher.Core" Version="0.5.1" />
-		<PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.1.0" />
+		<PackageReference Include="Flurl.Http" Version="4.0.2" />
+		<PackageReference Include="SBRW.Launcher.Core" Version="0.5.2" />
+		<PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.1.1" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)'=='Release'">
-		<PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.5.1" />
+		<PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.5.2" />
 	</ItemGroup>
 
 	<ItemGroup>
