@@ -4,7 +4,7 @@
 		<TargetFrameworks>netstandard2.0;net6.0-windows;net8.0-windows;net461;net472</TargetFrameworks>
 		<LangVersion>8.0</LangVersion>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>0.6.1</Version>
+		<Version>0.7.0</Version>
 		<Authors>Soapbox Race World - Launcher Division</Authors>
 		<Company>Soapbox Race World</Company>
 		<Description>A Game Launchers Proxy Library built within the .NET Standard Framework</Description>
@@ -38,7 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Flurl.Http" Version="3.2.4" />
+		<PackageReference Include="Flurl.Http" Version="4.0.2" />
 		<PackageReference Include="SBRW.Launcher.Core" Version="0.5.2" />
 		<PackageReference Include="SBRW.Nancy.Hosting.Self" Version="2.1.1" />
 	</ItemGroup>

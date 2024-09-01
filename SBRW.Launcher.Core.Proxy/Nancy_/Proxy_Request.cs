@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_
 {
@@ -121,18 +122,18 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                     switch (method)
                     {
                         case "GET":
-                            responseMessage = await request.GetAsync(cancellationToken).ConfigureAwait(false);
+                            responseMessage = await request.GetAsync(HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
                             break;
                         case "POST":
-                            responseMessage = await request.PostAsync(new CapturedStringContent(requestBody),
+                            responseMessage = await request.PostAsync(new CapturedStringContent(requestBody), HttpCompletionOption.ResponseContentRead,
                                 cancellationToken).ConfigureAwait(false);
                             break;
                         case "PUT":
-                            responseMessage = await request.PutAsync(new CapturedStringContent(requestBody),
+                            responseMessage = await request.PutAsync(new CapturedStringContent(requestBody), HttpCompletionOption.ResponseContentRead,
                                 cancellationToken).ConfigureAwait(false);
                             break;
                         case "DELETE":
-                            responseMessage = await request.DeleteAsync(cancellationToken).ConfigureAwait(false);
+                            responseMessage = await request.DeleteAsync(HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
                             break;
                         default:
                             Log.Error("PROXY HANDLER: Cannot handle Request Method " + method);
