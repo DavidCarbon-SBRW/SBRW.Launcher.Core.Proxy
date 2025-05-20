@@ -82,7 +82,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
             if (!UsingCustomProxyPort)
             {
-                bool isNumeric = int.TryParse(Time_Clock.UnixEpochNetwork().Year.ToString(), out int Converted_Port);
+                bool isNumeric = int.TryParse(Time_Clock.UnixEpoch().CompareNetworkWithPCTime().Year.ToString(), out int Converted_Port);
 
                 if (isNumeric)
                 {
