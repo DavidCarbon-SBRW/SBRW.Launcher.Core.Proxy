@@ -1,4 +1,5 @@
 ﻿using SBRW.Launcher.Core.Extension.Logging_;
+using SBRW.Launcher.Core.Extension.Time_;
 using SBRW.Launcher.Core.Proxy.Log_;
 using System;
 
@@ -81,7 +82,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
             if (!UsingCustomProxyPort)
             {
-                bool isNumeric = int.TryParse(DateTime.Now.Year.ToString(), out int Converted_Port);
+                bool isNumeric = int.TryParse(Time_Clock.UnixEpochNetwork().Year.ToString(), out int Converted_Port);
 
                 if (isNumeric)
                 {
