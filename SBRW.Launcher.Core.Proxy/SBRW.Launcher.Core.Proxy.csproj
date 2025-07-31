@@ -4,7 +4,7 @@
 		<TargetFrameworks>netstandard2.0;net6.0-windows;net8.0-windows;net461;net472;net48;net481</TargetFrameworks>
 		<LangVersion>8.0</LangVersion>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<Version>0.9.0</Version>
+		<Version>0.9.1</Version>
 		<Authors>Soapbox Race World - Launcher Division</Authors>
 		<Company>Soapbox Race World</Company>
 		<Description>A Game Launchers Proxy Library built within the .NET Standard Framework</Description>
@@ -44,7 +44,7 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)'=='Release'">
-		<PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.7.0" />
+		<PackageReference Include="SBRW.Launcher.Core.Discord" Version="0.7.1" />
 	</ItemGroup>
 
 	<ItemGroup>
