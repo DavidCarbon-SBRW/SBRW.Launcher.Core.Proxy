@@ -98,5 +98,11 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
 
             return Port;
         }
+        /// <summary>
+        /// Set Number of Retries For Failed Requests
+        /// </summary>
+        /// <returns>The number of connection retries set by game server (Default is 0)</returns>
+        /// <remarks>If set to 0, it will only send a request once to the game server</remarks>
+        public static int ConnectionMaxRetries { get; set; } = 0;
     }
 }

@@ -1,22 +1,22 @@
 ﻿using Flurl;
 using Flurl.Http;
 using Flurl.Http.Content;
+using SBRW.Launcher.Core.Cache;
+using SBRW.Launcher.Core.Discord.RPC_;
+using SBRW.Launcher.Core.Extension.Logging_;
+using SBRW.Launcher.Core.Proxy.Log_;
+using SBRW.Launcher.Core.Required.Anti_Cheat;
 using SBRW.Nancy;
 using SBRW.Nancy.Bootstrapper;
 using SBRW.Nancy.Extensions;
 using SBRW.Nancy.Responses;
-using SBRW.Launcher.Core.Cache;
-using SBRW.Launcher.Core.Extension.Logging_;
-using SBRW.Launcher.Core.Required.Anti_Cheat;
-using SBRW.Launcher.Core.Discord.RPC_;
-using SBRW.Launcher.Core.Proxy.Log_;
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Net.Http;
 
 namespace SBRW.Launcher.Core.Proxy.Nancy_
 {
@@ -48,6 +48,40 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
             }
 
             return new TextResponse(!Proxy_Settings.Ignore_Errors ? HttpStatusCode.BadRequest : HttpStatusCode.OK, Error.Message);
+        }
+
+        private async Task<IFlurlResponse> SendAsyncWithRetry(IFlurlRequest request, string method, string body, string path, CancellationToken ct)
+        {
+            int maxRetries = Math.Max(1, Proxy_Settings.ConnectionMaxRetries);
+            Exception lastException = null;
+
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            {
+                try
+                {
+                    if (attempt > 1)
+                    {
+                        Log.Warning($"PROXY HANDLER: Retry attempt {attempt - 1} for {path}");
+                        int delayMs = 100 * (int)Math.Pow(2, attempt - 1);
+                        await Task.Delay(delayMs, ct).ConfigureAwait(false);
+                    }
+
+                    HttpMethod httpMethod = new HttpMethod(method);
+                    HttpContent content = (method == "GET" || method == "DELETE")
+                        ? null
+                        : new CapturedStringContent(body);
+
+                    return await request.SendAsync(httpMethod, content, HttpCompletionOption.ResponseContentRead, ct).ConfigureAwait(false);
+                }
+                catch (FlurlHttpException ex)
+                {
+                    lastException = ex;
+                    Log.Error($"PROXY HANDLER: Attempt {attempt} failed: {ex.Message}");
+                    if (attempt == maxRetries) throw;
+                }
+            }
+
+            throw lastException;
         }
 
         private async Task<Response> ProxyRequest(NancyContext Local_Context, CancellationToken cancellationToken)
@@ -117,29 +151,7 @@ namespace SBRW.Launcher.Core.Proxy.Nancy_
                         }
                     }
 
-                    IFlurlResponse responseMessage;
-
-                    switch (method)
-                    {
-                        case "GET":
-                            responseMessage = await request.GetAsync(HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
-                            break;
-                        case "POST":
-                            responseMessage = await request.PostAsync(new CapturedStringContent(requestBody), HttpCompletionOption.ResponseContentRead,
-                                cancellationToken).ConfigureAwait(false);
-                            break;
-                        case "PUT":
-                            responseMessage = await request.PutAsync(new CapturedStringContent(requestBody), HttpCompletionOption.ResponseContentRead,
-                                cancellationToken).ConfigureAwait(false);
-                            break;
-                        case "DELETE":
-                            responseMessage = await request.DeleteAsync(HttpCompletionOption.ResponseContentRead, cancellationToken).ConfigureAwait(false);
-                            break;
-                        default:
-                            Log.Error("PROXY HANDLER: Cannot handle Request Method " + method);
-                            responseMessage = null;
-                            break;
-                    }
+                    IFlurlResponse responseMessage = await SendAsyncWithRetry(request, method, requestBody, path, cancellationToken);
 
                     responseBody = await responseMessage.GetStringAsync();
 
